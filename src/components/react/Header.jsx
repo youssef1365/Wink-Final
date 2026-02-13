@@ -49,8 +49,8 @@ const Header = ({ onContactClick }) => {
       <div className="nav-container">
         <nav className="nav">
           <div className="nav-logo">
-            <a href="#home" onClick={(e) => handleNavClick(e, 'home')}>
-              <img src="/WinkWhite.png" alt="Wink Logo" />
+            <a href="#home" onClick={(e) => handleNavClick(e, 'home')} className="logo-wrapper">
+              <div className="dynamic-logo" />
             </a>
           </div>
 
@@ -95,7 +95,7 @@ const Header = ({ onContactClick }) => {
               className="cta-button-high-end"
               onClick={() => window.dispatchEvent(new Event('openContactModal'))}
             >
-              <span className="cta-text">Talk to an Expert</span>
+              <span className="cta-text">Start a Project</span>
               <div className="cta-shimmer"></div>
             </button>
           </div>
@@ -117,7 +117,7 @@ const Header = ({ onContactClick }) => {
 
         .header.scrolled {
           padding: 1rem 0;
-          background: rgba(1, 62, 86, 0.85);
+          background: transparent;
           backdrop-filter: blur(24px);
           -webkit-backdrop-filter: blur(24px);
           border-bottom: 1px solid rgba(255, 255, 255, 0.08);
@@ -137,12 +137,22 @@ const Header = ({ onContactClick }) => {
           position: relative;
         }
 
-        .nav-logo img {
+        .logo-wrapper {
+          display: block;
+          text-decoration: none;
+        }
+
+        .dynamic-logo {
           height: 52px;
+          width: 140px;
+          background-image: var(--logo-url, url('/WinkWhite.png'));
+          background-size: contain;
+          background-repeat: no-repeat;
+          background-position: left center;
           transition: all 0.5s ease;
         }
 
-        .header.scrolled .nav-logo img {
+        .header.scrolled .dynamic-logo {
           height: 38px;
         }
 
@@ -200,12 +210,9 @@ const Header = ({ onContactClick }) => {
           left: 50%;
           transform: translateX(-50%);
           min-width: 180px;
-
-          /* Premium Glassmorphism */
           background: rgba(1, 62, 86, 0.9);
           backdrop-filter: blur(12px) saturate(160%);
           -webkit-backdrop-filter: blur(12px) saturate(160%);
-
           list-style: none;
           padding: 0.5rem 0;
           margin: 0;
@@ -261,7 +268,7 @@ const Header = ({ onContactClick }) => {
 
         .cta-button-high-end {
           background: transparent;
-          color: var(--color-text-primary);
+          color: var(--color-1);
           border: 1px solid var(--color-text);
           padding: 0.7rem 1.6rem;
           font-size: 0.7rem;

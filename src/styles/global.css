@@ -22,6 +22,7 @@
   --space-md: 1rem;
   --space-lg: 2rem;
   --space-xl: 4rem;
+  --logo-url: url('/WinkWhite.png');
 }
 
 :root[data-theme="light"] {
@@ -32,6 +33,7 @@
   --color-primary: #0066cc;
   --color-primary-hover: #0052a3;
   --color-border: #e0e0e0;
+  --logo-url: url('/WinkBlue.png');
 }
 
 html {

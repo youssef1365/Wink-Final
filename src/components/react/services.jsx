@@ -63,7 +63,6 @@ const Services = () => {
 
       <style>{`
         .services-section {
-          /* Uses your primary background color (Charcoal in dark mode) */
           background-color: var(--color-bg);
           padding: var(--space-xl) var(--space-lg);
           display: flex;
@@ -79,11 +78,9 @@ const Services = () => {
         }
 
         .service-card {
-          /* Use secondary background so cards "pop" against the main background */
           background-color: var(--color-bg-secondary);
           padding: var(--space-xl) var(--space-lg);
           border-radius: var(--border-radius);
-          /* Dynamic shadow: softer in dark mode, visible in light mode */
           box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
           border: 1px solid rgba(255, 255, 255, 0.05);
           display: flex;
@@ -93,9 +90,8 @@ const Services = () => {
         }
 
         .service-number {
-          /* Using your orange/teal brand color for the background */
           background-color: var(--color-text);
-          color: var(--color-bg); /* Charcoal text on the orange/teal circle */
+          color: var(--color-bg);
           width: 40px;
           height: 40px;
           display: flex;
@@ -108,7 +104,6 @@ const Services = () => {
         }
 
         .service-title {
-          /* Main text color: White in dark mode, Charcoal in light mode */
           color: var(--color-text-primary, #ffffff);
           font-size: 1.5rem;
           font-weight: 800;
@@ -116,7 +111,6 @@ const Services = () => {
         }
 
         .service-text {
-          /* Secondary text color: Muted for better hierarchy */
           color: var(--color-text-secondary, rgba(255, 255, 255, 0.7));
           line-height: 1.6;
           margin: 0;

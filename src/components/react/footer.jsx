@@ -11,7 +11,7 @@ const Footer = () => {
     <>
       <style jsx>{`
         .footer-wrapper {
-          background-color: #013748;
+          background-color: black;
           color: var(--color-text-secondary);
           border-top: 0px solid var(--color-border);
           transition: background-color var(--transition), color var(--transition);

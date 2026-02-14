@@ -4,14 +4,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 export default function ContactModal() {
   const [isOpen, setIsOpen] = useState(false);
 
-  // Listen for the event from the Header
   useEffect(() => {
     const handleOpen = () => setIsOpen(true);
     window.addEventListener('openContactModal', handleOpen);
     return () => window.removeEventListener('openContactModal', handleOpen);
   }, []);
 
-  // Prevent background scroll when open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -92,16 +90,17 @@ export default function ContactModal() {
               align-items: center;
               justify-content: center;
               padding: 20px;
+              background: var--extra-color-third);
             }
             .modal-backdrop {
               position: absolute;
               inset: 0;
-              background: rgba(7, 30, 43, 0.85);
+              background: var(--extra-color-third);
               backdrop-filter: blur(12px);
             }
             .modal-card {
               position: relative;
-              background: #fff;
+              background: var(--extra-color-third);;
               width: 100%;
               max-width: 750px;
               border-radius: 20px;
@@ -149,7 +148,7 @@ export default function ContactModal() {
               width: 100%;
               margin-top: 20px;
               padding: 18px;
-              background: #071e2b; /* Charcoal Brand Color */
+              background: var(--color-bg);
               color: white;
               border: none;
               border-radius: 10px;

@@ -35,6 +35,11 @@ const Header = ({ onContactClick }) => {
         const expansionOffset = travelDistance * 0.3;
         offsetPosition += expansionOffset;
       }
+      if (targetId === 'services') {
+        const travelDistance = window.innerHeight * 3;  // Match your 300vh wrapper
+        const expansionOffset = travelDistance * 0.7;   // Land at 40% scroll progress
+        offsetPosition += expansionOffset;
+      }
 
       window.scrollTo({
         top: offsetPosition,
@@ -96,9 +101,9 @@ const Header = ({ onContactClick }) => {
           </ul>
 
           <div className="nav-cta">
-            {/*<button className="theme-toggle-minimal" onClick={toggleTheme} aria-label="Toggle theme">
+            <button className="theme-toggle-minimal" onClick={toggleTheme} aria-label="Toggle theme">
               <span className="theme-icon">{theme === 'light' ? '🌙' : '☀️'}</span>
-            </button>*/}
+            </button>
             <button
               className="cta-button-high-end"
               onClick={() => window.dispatchEvent(new Event('openContactModal'))}

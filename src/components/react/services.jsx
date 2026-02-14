@@ -82,13 +82,10 @@ const Services = () => {
                 transition={{ duration: 0.9, delay: index * 0.15 + 0.2, ease: [0.22, 1, 0.36, 1] }}
               />
 
-              {/* Title */}
               <h3 className="service-title">{service.title}</h3>
 
-              {/* Description */}
               <p className="service-text">{service.description}</p>
 
-              {/* Arrow */}
               <div className="card-arrow">
                 <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                   <path d="M3 9h12M11 5l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>

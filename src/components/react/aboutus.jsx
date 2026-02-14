@@ -1,351 +1,331 @@
-import { motion, useMotionValue, useAnimationFrame, useTransform } from 'framer-motion';
-import { useRef, useLayoutEffect, useState, useEffect } from 'react';
-
-function easeOutExpo(t) { return t === 1 ? 1 : 1 - Math.pow(2, -10 * t); }
-function easeInExpo(t)  { return t === 0 ? 0 : Math.pow(2, 10 * t - 10); }
+import { motion, useScroll, useTransform, useMotionValue, useAnimationFrame } from 'framer-motion';
+import { useRef, useState, useEffect } from 'react';
 
 export default function AboutUs() {
-  const markerRef = useRef(null);
-  const headerRef = useRef(null);
-  const [offsetTop, setOffsetTop] = useState(Infinity);
-  const [TRAVEL, setTRAVEL] = useState(2400);
+  const containerRef = useRef(null);
   const [slideIndex, setSlideIndex] = useState(0);
-  const vmContainerRef = useRef(null);
+  const scrollProgress = useMotionValue(0);
 
-  useLayoutEffect(() => { headerRef.current = document.querySelector('.header'); }, []);
-  useEffect(() => { setTRAVEL(window.innerHeight * 2.8); }, []);
-
-  useLayoutEffect(() => {
-    const measure = () => {
-      const trigger = document.getElementById('about-trigger');
-      if (!trigger) return;
-      setOffsetTop(trigger.getBoundingClientRect().top + window.scrollY - window.innerHeight * 0.5);
-    };
-    measure();
-    window.addEventListener('resize', measure);
-    return () => window.removeEventListener('resize', measure);
-  }, []);
-
-  const scrollY = useMotionValue(0);
-  const headerH = useMotionValue(90);
-  const innerH  = useMotionValue(768);
-
-  const progress = useTransform(scrollY, (y) => {
-    if (offsetTop === Infinity) return 0;
-    return Math.min(1, Math.max(0, (y - offsetTop) / TRAVEL));
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
   });
 
-  const activeSlideValue = useTransform(progress, [0.35, 0.55], [0, 1]);
+  useEffect(() => {
+    const unsubscribe = scrollYProgress.on('change', (latest) => {
+      const current = scrollProgress.get();
 
-  useAnimationFrame(() => {
-    scrollY.set(window.scrollY);
-    innerH.set(window.innerHeight);
-    if (headerRef.current) headerH.set(headerRef.current.getBoundingClientRect().height);
+      if (latest > 0.15 && latest < 0.45) {
+        const diff = latest - current;
+        const slowedProgress = current + (diff * 0.15);
+        scrollProgress.set(slowedProgress);
+      } else if (latest > 0.45 && latest < 0.95) {
+        const diff = latest - current;
+        const slowedProgress = current + (diff * 0.2);
+        scrollProgress.set(slowedProgress);
+      } else {
+        scrollProgress.set(latest);
+      }
+    });
 
-    const currentSlide = Math.round(activeSlideValue.get());
-    if (currentSlide !== slideIndex) setSlideIndex(currentSlide);
-  });
+    return unsubscribe;
+  }, [scrollYProgress, scrollProgress]);
 
-  const cardW = useTransform(progress, (p) => {
-    if (p < 0.01) return '0px';
-    if (p < 0.03) return '8px';
-    if (p < 0.20) return `${easeOutExpo((p - 0.03) / 0.17) * 100}vw`;
-    if (p < 0.80) return '100vw';
-    if (p < 0.97) return `${easeInExpo(1 - (p - 0.80) / 0.17) * 100}vw`;
-    if (p < 0.99) return '8px';
-    return '0px';
-  });
+  const y = useTransform(scrollProgress, [0, 0.2, 0.95, 1], ["100vh", "0vh", "0vh", "-20vh"]);
+  const opacity = useTransform(scrollProgress, [0, 0.15, 0.95, 1], [0, 1, 1, 0]);
+  const contentOpacity = useTransform(scrollProgress, [0.15, 0.4], [0, 1]);
+  const col1Y = useTransform(scrollProgress, [0.2, 0.4], ["32px", "0px"]);
+  const col2Y = useTransform(scrollProgress, [0.25, 0.45], ["32px", "0px"]);
 
-  const cardH = useTransform([progress, headerH, innerH], ([p, hh, ih]) => {
-    const full = ih - hh;
-    if (p < 0.01) return '0px';
-    if (p < 0.03) return '8px';
-    if (p < 0.20) return `${easeOutExpo((p - 0.03) / 0.17) * full}px`;
-    if (p < 0.80) return `${full}px`;
-    if (p < 0.97) return `${easeInExpo(1 - (p - 0.80) / 0.17) * full}px`;
-    if (p < 0.99) return '8px';
-    return '0px';
-  });
+  const slideProgress = useTransform(scrollProgress, [0.6, 0.8], [0, 1]);
 
-  const radius = useTransform(progress, (p) => {
-    if (p < 0.03) return '50%';
-    if (p < 0.12) return `${50 - easeOutExpo((p - 0.03) / 0.09) * 50}%`;
-    if (p < 0.80) return '0px';
-    if (p < 0.89) return `${easeInExpo((p - 0.80) / 0.09) * 50}%`;
-    return '50%';
-  });
-
-  const contentOpacity = useTransform(progress, [0.18, 0.26, 0.74, 0.80], [0, 1, 1, 0]);
-  const col1Op = useTransform(progress, [0.19, 0.27], [0, 1]);
-  const col1Y  = useTransform(progress, [0.19, 0.29], ['24px', '0px']);
-  const col2Op = useTransform(progress, [0.22, 0.30], [0, 1]);
-  const col2Y  = useTransform(progress, [0.22, 0.32], ['24px', '0px']);
-  const scrollProgressScale = useTransform(progress, [0, 1], [0, 1]);
-  const containerDisplay = useTransform(progress, (p) => p < 0.01 ? 'none' : 'flex');
-  const containerTop     = useTransform(headerH, (hh) => `${hh}px`);
-  const containerH       = useTransform([headerH, innerH], ([hh, ih]) => `${ih - hh}px`);
+  useEffect(() => {
+    const unsubscribe = slideProgress.on('change', (v) => {
+      const newIndex = Math.round(v);
+      if (newIndex !== slideIndex) {
+        setSlideIndex(newIndex);
+      }
+    });
+    return unsubscribe;
+  }, [slideProgress, slideIndex]);
 
   const values = [
-    { icon: '◈', label: 'Quality over quantity', desc: 'Every detail is intentional — we never trade craft for volume.'  },
-    { icon: '◉', label: 'Business-driven',        desc: 'Every event is designed to generate real, measurable outcomes.' },
-    { icon: '◎', label: 'Global mindset',          desc: 'Connecting decision-makers across borders and industries.'      },
+    { icon: '◈', label: 'Quality over quantity', desc: 'Every detail is intentional — we never trade craft for volume.' },
+    { icon: '◉', label: 'Business-driven', desc: 'Every event is designed to generate real, measurable outcomes.' },
+    { icon: '◎', label: 'Global mindset', desc: 'Connecting decision-makers across borders and industries.' },
   ];
 
   const vmSlides = [
     { label: 'Mission', text: 'We design, organize, and deliver events that generate real business outcomes.' },
-    { label: 'Vision',  text: 'To become the leading platform for meaningful B2B connections worldwide.' },
+    { label: 'Vision', text: 'To become the leading platform for meaningful B2B connections worldwide.' },
   ];
 
   return (
     <>
       <style>{`
-        .au-container {
-          position: fixed;
-          left: 0;
-          right: 0;
-          align-items: flex-start;
-          justify-content: center;
-          pointer-events: none;
-          z-index: 50;
-          overflow: hidden;
-        }
-        .au-card {
-          overflow: hidden;
-          flex-shrink: 0;
+        .aus-wrapper {
+          min-height: 300vh;
           position: relative;
-          pointer-events: auto;
-          background: linear-gradient(155deg, #0d4a62 0%, #071e2b 100%);
-          box-shadow: 0 32px 80px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.06);
         }
-        .au-scroll-progress {
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          height: 3px;
-          background: rgba(255,255,255,0.08);
-          z-index: 100;
+        .aus-sticky {
+          position: sticky;
+          top: 90px;
+          height: calc(100vh - 90px);
+          display: flex;
+          align-items: center;
+          justify-content: center;
           overflow: hidden;
         }
-        .au-scroll-progress-bar {
-          height: 100%;
-          background: linear-gradient(90deg, var(--color-primary, #17b8c8) 0%, rgba(23,184,200,0.6) 100%);
-          box-shadow: 0 0 12px rgba(23,184,200,0.6);
-          transform-origin: left;
+        .aus-card {
+          width: 90vw;
+          max-width: 1400px;
+          height: 85vh;
+          max-height: 700px;
+          border-radius: 16px;
+          box-shadow: 0 32px 80px rgba(0,0,0,0.55);
+          overflow: hidden;
+          position: relative;
         }
-        .au-grain {
-          position: absolute;
-          inset: 0;
-          pointer-events: none;
-          z-index: 0;
-          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-        }
-        .au-grid {
-          position: absolute;
-          inset: 0;
+        .aus-grid {
+          position: relative;
           z-index: 1;
           display: grid;
           grid-template-columns: 1fr 1fr;
+          height: 100%;
           overflow: hidden;
         }
-        .au-left {
+        .aus-left {
           display: flex;
           flex-direction: column;
-          justify-content: space-between;
-          padding: clamp(2rem, 4vw, 4.5rem);
-          border-right: 1px solid rgba(255,255,255,0.07);
-          box-sizing: border-box;
-          overflow: hidden;
+          padding: clamp(2rem, 3.5vw, 3.5rem);
+          background: #F5F5F5;
+          position: relative;
+          border-right: 1px solid rgba(0,62,86,0.1);
         }
-        .au-eyebrow {
-          font-size: 0.6rem;
+        .aus-eyebrow {
+          font-size:1.5rem;
           text-transform: uppercase;
-          letter-spacing: 0.18em;
-          color: rgba(255,255,255,0.28);
-          margin-bottom: 1.5rem;
+          letter-spacing: 0.2em;
+          color: rgba(0,62,86,0.4);
+          margin-bottom: 1rem;
+          position: relative;
+          z-index: 1;
         }
-        .au-heading {
-          font-size: clamp(3rem, 6.5vw, 6rem);
+        .aus-heading {
+          font-size: 5rem;
           font-weight: 900;
-          line-height: 0.88;
+          line-height: 0.9;
           letter-spacing: -0.04em;
-          margin: 0 0 1.8rem 0;
-          color: #fff;
+          margin: 0 0 1.2rem 0;
+          color: #003f5c;
+          position: relative;
+          z-index: 1;
         }
-        .au-subtext {
-          font-size: clamp(0.82rem, 1vw, 0.95rem);
-          line-height: 1.8;
-          color: rgba(255,255,255,0.42);
-          max-width: 360px;
-          margin: 0 0 2rem 0;
+        .aus-subtext {
+          font-size: 1rem;
+          line-height: 1.7;
+          color: rgba(0,62,86,0.6);
+          max-width: 340px;
+          margin: 0 0 1.5rem 0;
+          position: relative;
+          z-index: 1;
         }
-        .au-values-label {
-          font-size: 0.55rem;
+        .aus-values-label {
+          font-size: 2rem;
           text-transform: uppercase;
-          letter-spacing: 0.18em;
-          color: rgba(255,255,255,0.22);
-          border-top: 1px solid rgba(255,255,255,0.07);
-          padding-top: 1.2rem;
-          margin-bottom: 0.8rem;
+          letter-spacing: 0.2em;
+          color: rgba(0,62,86,0.35);
+          border-top: 0px solid ;
+          padding-top: 0rem;
+          margin-bottom: 0rem;
+          position: relative;
+          z-index: 1;
         }
-        .au-value-row {
+        .aus-value-row {
           display: flex;
-          gap: 0.9rem;
+          gap: 1rem;
           align-items: flex-start;
-          padding: 0.55rem 0;
+          padding: 1rem 0;
+          position: relative;
+          z-index: 1;
+          font-size: 0.7rem;
         }
-        .au-value-row + .au-value-row {
-          border-top: 1px solid rgba(255,255,255,0.05);
+        .aus-value-row + .aus-value-row {
+          border-top: 1px solid rgba(0,62,86,0.08);
         }
-        .au-value-icon {
+        .aus-value-icon {
           color: var(--color-primary, #17b8c8);
-          font-size: 0.75rem;
-          margin-top: 0.1rem;
+          font-size: 0.7rem;
+          margin-top: 0.05rem;
           flex-shrink: 0;
         }
-        .au-value-title {
-          font-size: 0.8rem;
+        .aus-value-title {
+          font-size: 1rem;
           font-weight: 600;
-          color: #fff;
+          color: #003f5c;
           letter-spacing: -0.01em;
+          line-height: 1.4;
         }
-        .au-value-desc {
-          font-size: 0.68rem;
-          color: rgba(255,255,255,0.3);
-          margin-top: 0.12rem;
+        .aus-value-desc {
+          font-size: 0.8rem;
+          color: rgba(0,62,86,0.5);
+          margin-top: 0.15rem;
           line-height: 1.5;
         }
-        .au-right {
+        .aus-right {
           display: flex;
           flex-direction: column;
-          padding: clamp(2rem, 4vw, 4.5rem);
-          box-sizing: border-box;
-          gap: clamp(1rem, 2vh, 1.8rem);
-          overflow: hidden;
+          padding: clamp(2rem, 3.5vw, 3.5rem);
+          background: linear-gradient(155deg, #0d4a62 0%, #071e2b 100%);
+          position: relative;
         }
-        .au-vm-container {
-          flex: 1 1 0;
-          min-height: 0;
-          border-radius: 0.6rem;
+        .aus-grain {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+          pointer-events: none;
+          z-index: 0;
+        }
+        .aus-vm-container {
+          flex: 1;
+          border-radius: 12px;
           overflow: hidden;
           position: relative;
           background: rgba(7,30,43,0.6);
-          border: 1px solid rgba(255,255,255,0.08);
+          border: 1px solid rgba(255,255,255,0.1);
           display: flex;
           flex-direction: column;
+          box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+          z-index: 1;
         }
-        .au-vm-slides {
+        .aus-vm-slides {
           flex: 1;
           position: relative;
           overflow: hidden;
         }
-        .au-vm-slide {
+        .aus-vm-slide {
           position: absolute;
           inset: 0;
-          padding: clamp(2rem, 3vw, 3.5rem);
+          padding: clamp(2rem, 3vw, 3rem);
           display: flex;
           flex-direction: column;
           justify-content: center;
           transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .au-vm-slide.active { opacity: 1; transform: translateX(0); }
-        .au-vm-slide.next { opacity: 0; transform: translateX(100%); }
-        .au-vm-slide.prev { opacity: 0; transform: translateX(-100%); }
-        .au-vm-label {
-          font-size: 0.6rem;
+        .aus-vm-slide.active { opacity: 1; transform: translateX(0); }
+        .aus-vm-slide.next { opacity: 0; transform: translateX(100%); }
+        .aus-vm-slide.prev { opacity: 0; transform: translateX(-100%); }
+        .aus-vm-label {
+          font-size: 2rem;
           text-transform: uppercase;
-          letter-spacing: 0.18em;
+          letter-spacing: 0.2em;
           color: var(--color-primary, #17b8c8);
-          margin-bottom: 1.2rem;
+          margin-bottom: 1rem;
+          font-weight: 600;
         }
-        .au-vm-text {
-          font-size: clamp(1.2rem, 2vw, 1.6rem);
-          line-height: 1.6;
-          color: rgba(255,255,255,0.85);
+        .aus-vm-text {
+          font-size: clamp(1rem, 1.6vw, 1.35rem);
+          line-height: 1.65;
+          color: rgba(255,255,255,0.9);
           font-weight: 500;
-          letter-spacing: -0.02em;
+          letter-spacing: -0.01em;
         }
-        .au-vm-nav {
+        .aus-vm-nav {
           display: flex;
-          gap: 0.5rem;
-          padding: 1rem clamp(2rem, 3vw, 3.5rem);
-          border-top: 1px solid rgba(255,255,255,0.07);
+          gap: 0.4rem;
+          padding: 1rem clamp(2rem, 3vw, 3rem);
+          border-top: 1px solid rgba(255,255,255,0.1);
+          background: rgba(7,30,43,0.4);
         }
-        .au-vm-dot {
-          width: 32px;
+        .aus-vm-dot {
+          width: 28px;
           height: 3px;
-          background: rgba(255,255,255,0.15);
+          background: rgba(255,255,255,0.2);
           border-radius: 2px;
           transition: all 0.3s ease;
+          cursor: pointer;
         }
-        .au-vm-dot.active { background: var(--color-primary, #17b8c8); }
-        .au-spacer {
-          pointer-events: none;
-          background: linear-gradient(to bottom, var(--color-bg, #013e56) 70%, var(--color-bg-secondary, #018391) 100%);
+        .aus-vm-dot.active {
+          background: var(--color-primary, #17b8c8);
+          box-shadow: 0 0 8px rgba(23,184,200,0.4);
+        }
+        .aus-vm-dot:hover { background: rgba(255,255,255,0.35); }
+
+        @media (max-width: 768px) {
+          .aus-grid {
+            grid-template-columns: 1fr;
+          }
+          .aus-left {
+            min-height: 50vh;
+            border-right: none;
+            border-bottom: 1px solid rgba(0,62,86,0.1);
+          }
+          .aus-right {
+            min-height: 50vh;
+          }
         }
       `}</style>
 
-      <motion.div
-        className="au-container"
-        style={{ top: containerTop, height: containerH, display: containerDisplay }}
-      >
-        <motion.div
-          className="au-card"
-          style={{ width: cardW, height: cardH, borderRadius: radius }}
-        >
-          <div className="au-scroll-progress">
-            <motion.div className="au-scroll-progress-bar" style={{ scaleX: scrollProgressScale }} />
-          </div>
-          <div className="au-grain" />
-
-          <motion.div className="au-grid" style={{ opacity: contentOpacity }}>
-            <motion.div className="au-left" style={{ opacity: col1Op, y: col1Y }}>
-              <div>
-                <div className="au-eyebrow">Wink B2B Agency</div>
-                <h2 className="au-heading">The<br />Wink<br />Way.</h2>
-                <p className="au-subtext">Connecting decision-makers through carefully curated business experiences.</p>
-              </div>
-              <div>
-                <div className="au-values-label">Values & Principles</div>
-                {values.map((v, i) => (
-                  <div key={i} className="au-value-row">
-                    <span className="au-value-icon">{v.icon}</span>
-                    <div>
-                      <div className="au-value-title">{v.label}</div>
-                      <div className="au-value-desc">{v.desc}</div>
+      <div ref={containerRef} className="aus-wrapper">
+        <div className="aus-sticky">
+          <motion.div
+            className="aus-card"
+            style={{ y, opacity }}
+          >
+            <motion.div className="aus-grid" style={{ opacity: contentOpacity }}>
+              <motion.div className="aus-left" style={{ y: col1Y }}>
+                <div>
+                  <div className="aus-eyebrow">Wink B2B Agency</div>
+                  <h2 className="aus-heading">The Wink Way.</h2>
+                  <p className="aus-subtext">Connecting decision-makers through carefully curated business experiences.</p>
+                </div>
+                <div>
+                  <div className="aus-values-label">Values & Principles</div>
+                  {values.map((v, i) => (
+                    <div key={i} className="aus-value-row">
+                      <span className="aus-value-icon">{v.icon}</span>
+                      <div>
+                        <div className="aus-value-title">{v.label}</div>
+                        <div className="aus-value-desc">{v.desc}</div>
+                      </div>
                     </div>
+                  ))}
+                </div>
+              </motion.div>
+
+              <motion.div className="aus-right" style={{ y: col2Y }}>
+                <div className="aus-grain" />
+                <div className="aus-vm-container">
+                  <div className="aus-vm-slides">
+                    {vmSlides.map((slide, i) => (
+                      <div
+                        key={i}
+                        className={`aus-vm-slide ${
+                          i === slideIndex ? 'active' :
+                          i > slideIndex ? 'next' : 'prev'
+                        }`}
+                      >
+                        <div className="aus-vm-label">{slide.label}</div>
+                        <div className="aus-vm-text">{slide.text}</div>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </motion.div>
-
-            <motion.div className="au-right" style={{ opacity: col2Op, y: col2Y }}>
-              <div className="au-vm-container" ref={vmContainerRef}>
-                <div className="au-vm-slides">
-                  {vmSlides.map((slide, i) => (
-                    <div
-                      key={i}
-                      className={`au-vm-slide ${
-                        i === slideIndex ? 'active' :
-                        i > slideIndex ? 'next' : 'prev'
-                      }`}
-                    >
-                      <div className="au-vm-label">{slide.label}</div>
-                      <div className="au-vm-text">{slide.text}</div>
-                    </div>
-                  ))}
+                  <div className="aus-vm-nav">
+                    {vmSlides.map((_, i) => (
+                      <div
+                        key={i}
+                        className={`aus-vm-dot ${i === slideIndex ? 'active' : ''}`}
+                        onClick={() => setSlideIndex(i)}
+                      />
+                    ))}
+                  </div>
                 </div>
-                <div className="au-vm-nav">
-                  {vmSlides.map((_, i) => (
-                    <div key={i} className={`au-vm-dot ${i === slideIndex ? 'active' : ''}`} />
-                  ))}
-                </div>
-              </div>
+              </motion.div>
             </motion.div>
           </motion.div>
-        </motion.div>
-      </motion.div>
-      <div className="au-spacer" style={{ height: TRAVEL }} />
+        </div>
+      </div>
     </>
   );
 }

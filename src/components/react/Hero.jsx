@@ -22,11 +22,11 @@ const Hero = () => {
 
       <style jsx>{`
         .hero {
-          min-height: 90vh;
+          min-height: 109vh;
           display: flex;
           align-items: center;
           justify-content: center;
-          padding: 7rem 5rem 4rem;
+          padding: 7rem 5rem 5rem;
         }
 
         .hero-content {
@@ -43,7 +43,7 @@ const Hero = () => {
 
         .hero-title {
           font-size: clamp(3rem, 10vw, 6rem);
-          line-height: 1.25;
+          line-height: 1.1;
           font-weight: 800;
           color: var(--color-text);
           margin-bottom: 2rem;
@@ -72,9 +72,9 @@ const Hero = () => {
           background-color: #44cba5;
           color: white;
           border: none;
-          padding: var(--space-sm) var(--space-md);
+          padding: 1rem 1rem;
           border-radius: var(--border-radius);
-          font-weight: 600;
+          font-weight: 900;
           cursor: pointer;
         }
 

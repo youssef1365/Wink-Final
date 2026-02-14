@@ -30,7 +30,7 @@ const Header = ({ onContactClick }) => {
       const headerOffset = 100;
       const elementPosition = element.getBoundingClientRect().top;
       let offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-        if (targetId === 'about') {
+      if (targetId === 'about') {
         const travelDistance = window.innerHeight * 2.8;
         const expansionOffset = travelDistance * 0.3;
         offsetPosition += expansionOffset;
@@ -55,28 +55,36 @@ const Header = ({ onContactClick }) => {
           </div>
 
           <ul className="nav-links">
-            <li><a href="#home" onClick={(e) => handleNavClick(e, 'home')}><span className="nav-link-text">Home</span><span className="nav-link-underline"></span></a></li>
-            <li><a href="#events" onClick={(e) => handleNavClick(e, 'events')}><span className="nav-link-text">Events</span><span className="nav-link-underline"></span></a></li>
-            <li><a href="#services" onClick={(e) => handleNavClick(e, 'services')}><span className="nav-link-text">Services</span><span className="nav-link-underline"></span></a></li>
-            <li><a href="#packages" onClick={(e) => handleNavClick(e, 'packages')}><span className="nav-link-text">Packages</span><span className="nav-link-underline"></span></a></li>
+            {['home', 'events', 'services', 'packages'].map((item) => (
+              <li key={item}>
+                <a href={`#${item}`} onClick={(e) => handleNavClick(e, item)} className="nav-link">
+                  <span className="nav-link-text">{item}</span>
+                  <span className="nav-link-dot" />
+                </a>
+              </li>
+            ))}
 
             <li
               className="dropdown-wrapper"
               onMouseEnter={() => setIsWinkOpen(true)}
               onMouseLeave={() => setIsWinkOpen(false)}
             >
-              <button className="wink-trigger-btn" onClick={(e) => handleNavClick(e, 'about')}>
+              <button className="wink-trigger-btn nav-link" onClick={(e) => handleNavClick(e, 'about')}>
                 <span className="nav-link-text">WINK</span>
-                <span className="dropdown-arrow">▼</span>
-                <span className="nav-link-underline"></span>
+                <span className="dropdown-arrow">
+                  <svg width="8" height="5" viewBox="0 0 8 5" fill="none">
+                    <path d="M1 1L4 4L7 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </span>
+                <span className="nav-link-dot" />
               </button>
               <AnimatePresence>
                 {isWinkOpen && (
                   <motion.ul
-                    initial={{ opacity: 0, y: 5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 5 }}
-                    transition={{ duration: 0.2 }}
+                    initial={{ opacity: 0, y: 8, scale: 0.97 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 8, scale: 0.97 }}
+                    transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
                     className="dropdown-list"
                   >
                     <li><a href="#engage" onClick={(e) => handleNavClick(e, 'engage')}>Engage</a></li>
@@ -88,21 +96,27 @@ const Header = ({ onContactClick }) => {
           </ul>
 
           <div className="nav-cta">
-            <button className="theme-toggle-minimal" onClick={toggleTheme}>
-              {theme === 'light' ? '🌙' : '☀️'}
-            </button>
+            {/*<button className="theme-toggle-minimal" onClick={toggleTheme} aria-label="Toggle theme">
+              <span className="theme-icon">{theme === 'light' ? '🌙' : '☀️'}</span>
+            </button>*/}
             <button
               className="cta-button-high-end"
               onClick={() => window.dispatchEvent(new Event('openContactModal'))}
             >
               <span className="cta-text">Start a Project</span>
-              <div className="cta-shimmer"></div>
+              <span className="cta-arrow">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </span>
             </button>
           </div>
         </nav>
       </div>
 
       <style jsx>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Montserrat:wght@400;600;700;800&display=swap');
+
         .header {
           position: fixed;
           top: 0;
@@ -110,17 +124,24 @@ const Header = ({ onContactClick }) => {
           right: 0;
           z-index: 1000;
           width: 100%;
-          padding: 1.8rem 0;
-          transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+          padding: 1.1rem 0;
+          transition: padding 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+                      background 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+                      backdrop-filter 0.5s ease,
+                      border-color 0.5s ease;
           background: linear-gradient(180deg, var(--color-bg) 0%, var(--color-bg) 70%, transparent 100%);
         }
 
         .header.scrolled {
-          padding: 1rem 0;
+          padding: 0.35rem 0;
           background: transparent;
           backdrop-filter: blur(24px);
           -webkit-backdrop-filter: blur(24px);
-          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .theme-icon {
+          font-size: 1.4rem;
         }
 
         .nav-container {
@@ -137,67 +158,94 @@ const Header = ({ onContactClick }) => {
           position: relative;
         }
 
+        /* ── LOGO ── */
+        .nav-logo {
+          flex-shrink: 0;
+          min-width: 220px;
+        }
+
         .logo-wrapper {
           display: block;
           text-decoration: none;
         }
 
         .dynamic-logo {
-          height: 52px;
-          width: 140px;
+          height: 64px;
+          width: 220px;
+          min-width: 220px;
           background-image: var(--logo-url, url('/WinkWhite.png'));
           background-size: contain;
           background-repeat: no-repeat;
           background-position: left center;
-          transition: all 0.5s ease;
         }
 
-        .header.scrolled .dynamic-logo {
-          height: 38px;
-        }
-
+        /* ── NAV LINKS ── */
         .nav-links {
           display: flex;
-          gap: clamp(1.2rem, 2.5vw, 3rem);
+          gap: clamp(1.4rem, 2.5vw, 3.2rem);
           list-style: none;
           align-items: center;
           position: absolute;
           left: 50%;
           transform: translateX(-50%);
+          margin: 0;
+          padding: 0;
         }
 
-        .nav-links a, .wink-trigger-btn {
-          font-size: 0.7rem;
+        .nav-link, .wink-trigger-btn {
+          font-family: 'Montserrat', sans-serif;
+          font-size: 0.82rem;
           text-transform: uppercase;
-          letter-spacing: 0.2em;
+          letter-spacing: 0.22em;
           font-weight: 700;
           color: var(--color-text-primary);
           text-decoration: none;
           background: none;
           border: none;
           cursor: pointer;
-          padding: 0.5rem 0;
+          padding: 0.4rem 0;
           position: relative;
           display: inline-flex;
           align-items: center;
-          gap: 0.4rem;
+          gap: 0.35rem;
+          opacity: 0.75;
+          transition: opacity 0.3s ease, color 0.3s ease;
         }
 
-        .nav-link-underline {
+        .nav-link:hover, .wink-trigger-btn:hover {
+          opacity: 1;
+        }
+
+        /* Elegant dot indicator on hover */
+        .nav-link-dot {
           position: absolute;
-          bottom: 0;
-          left: 0;
-          width: 0;
-          height: 1.5px;
-          background: var(--color-text);
-          transition: width 0.4s ease;
+          bottom: -2px;
+          left: 50%;
+          transform: translateX(-50%) scale(0);
+          width: 3px;
+          height: 3px;
+          border-radius: 50%;
+          background: var(--color-text-primary);
+          transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        .nav-links a:hover .nav-link-underline,
-        .wink-trigger-btn:hover .nav-link-underline {
-          width: 100%;
+        .nav-link:hover .nav-link-dot,
+        .wink-trigger-btn:hover .nav-link-dot {
+          transform: translateX(-50%) scale(1);
         }
 
+        .dropdown-arrow {
+          display: flex;
+          align-items: center;
+          opacity: 0.6;
+          transition: transform 0.3s ease;
+        }
+
+        .wink-trigger-btn:hover .dropdown-arrow {
+          transform: translateY(2px);
+        }
+
+        /* ── DROPDOWN ── */
         .dropdown-wrapper {
           position: relative;
           display: flex;
@@ -206,103 +254,146 @@ const Header = ({ onContactClick }) => {
 
         .dropdown-list {
           position: absolute;
-          top: 100%;
+          top: calc(100% + 12px);
           left: 50%;
           transform: translateX(-50%);
-          min-width: 180px;
-          background: rgba(1, 62, 86, 0.9);
-          backdrop-filter: blur(12px) saturate(160%);
-          -webkit-backdrop-filter: blur(12px) saturate(160%);
+          min-width: 160px;
+          background: rgba(5, 5, 8, 0.88);
+          backdrop-filter: blur(20px) saturate(180%);
+          -webkit-backdrop-filter: blur(20px) saturate(180%);
           list-style: none;
-          padding: 0.5rem 0;
+          padding: 0.6rem 0;
           margin: 0;
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-top: none;
-          border-radius: 0 0 8px 8px;
-          box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+          border: 1px solid rgba(255, 255, 255, 0.07);
+          border-radius: 8px;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5),
+                      0 0 0 0.5px rgba(255,255,255,0.04);
           z-index: 1000;
         }
 
+        .dropdown-list::before {
+          content: '';
+          position: absolute;
+          top: -5px;
+          left: 50%;
+          transform: translateX(-50%) rotate(45deg);
+          width: 8px;
+          height: 8px;
+          background: rgba(5, 5, 8, 0.88);
+          border-left: 1px solid rgba(255, 255, 255, 0.07);
+          border-top: 1px solid rgba(255, 255, 255, 0.07);
+        }
+
         .dropdown-list li a {
-          display: block;
-          padding: 0.8rem 1.5rem;
-          font-size: 0.7rem;
-          color: rgba(255, 255, 255, 0.8);
+          display: flex;
+          align-items: center;
+          padding: 0.65rem 1.4rem;
+          font-family: 'Montserrat', sans-serif;
+          font-size: 0.62rem;
+          color: rgba(255, 255, 255, 0.5);
           text-decoration: none;
           text-transform: uppercase;
-          letter-spacing: 0.15em;
+          letter-spacing: 0.18em;
           font-weight: 600;
-          transition: all 0.3s ease;
+          transition: color 0.25s ease, padding-left 0.25s ease;
         }
 
         .dropdown-list li a:hover {
-          background: rgba(255, 255, 255, 0.1);
-          color: var(--color-text);
-          padding-left: 1.8rem;
+          color: rgba(255, 255, 255, 0.95);
+          padding-left: 1.7rem;
         }
 
+        /* ── CTA AREA ── */
         .nav-cta {
           display: flex;
           align-items: center;
-          gap: 1.2rem;
+          gap: 1rem;
           flex-shrink: 0;
         }
 
         .theme-toggle-minimal {
           background: transparent;
-          border: 1px solid rgba(255, 255, 255, 0.15);
-          width: 38px;
-          height: 38px;
+          border: none;
+          width: 48px;
+          height: 48px;
           border-radius: 50%;
           cursor: pointer;
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 1rem;
-          transition: all 0.3s ease;
+          transition: background 0.3s ease;
+          opacity: 0.65;
         }
 
         .theme-toggle-minimal:hover {
-          border-color: var(--color-text);
+          background: transparent;
+          opacity: 1;
         }
 
+
         .cta-button-high-end {
-          background: transparent;
-          color: var(--color-1);
-          border: 1px solid var(--color-text);
-          padding: 0.7rem 1.6rem;
-          font-size: 0.7rem;
+          background: var(--color-bg-secondary);
+          color: #050508;
+          border: none;
+          padding: 0.85rem 2rem;
+          font-family: 'Montserrat', sans-serif;
+          font-size: 0.8rem;
           text-transform: uppercase;
-          letter-spacing: 0.12em;
+          letter-spacing: 0.18em;
           font-weight: 800;
           cursor: pointer;
-          border-radius: 2px;
-          transition: all 0.4s ease;
+          border-radius: 100px;
+          transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+          box-shadow 0.35s ease,
+          letter-spacing 0.35s ease;
           position: relative;
           overflow: hidden;
           white-space: nowrap;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          box-shadow: 0 2px 16px rgba(255, 255, 255, 0.1);
         }
 
-        .cta-text { position: relative; z-index: 2; }
+        .cta-button-high-end:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 32px ;
+          background: var(--color-bg-secondary);
+          letter-spacing: 0.21em;
+        }
+
+        .cta-button-high-end:active {
+          transform: translateY(0);
+        }
+
+        .cta-text {
+          position: relative;
+          z-index: 2;
+        }
+
+        .cta-arrow {
+          display: flex;
+          align-items: center;
+          position: relative;
+          z-index: 2;
+          transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .cta-button-high-end:hover .cta-arrow {
+          transform: translateX(3px);
+        }
 
         .cta-button-high-end::before {
           content: '';
           position: absolute;
           inset: 0;
-          background: var(--color-text);
-          transform: scaleX(0);
-          transform-origin: right;
-          transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-          z-index: 1;
+          background: var(--color-bg);
+          transform: translateX(-120%);
+          transition: transform 0.65s ease;
         }
 
         .cta-button-high-end:hover::before {
-          transform: scaleX(1);
-          transform-origin: left;
-        }
-
-        .cta-button-high-end:hover .cta-text {
-          color: var(--color-bg);
+          transform: translateX(120%);
         }
 
         @media (max-width: 1024px) {

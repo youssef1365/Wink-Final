@@ -11,9 +11,9 @@ const Footer = () => {
     <>
       <style jsx>{`
         .footer-wrapper {
-          background-color: var(--color-bg);
+          background-color: #013748;
           color: var(--color-text-secondary);
-          border-top: 1px solid var(--color-border);
+          border-top: 0px solid var(--color-border);
           transition: background-color var(--transition), color var(--transition);
         }
 
@@ -56,8 +56,8 @@ const Footer = () => {
           background-size: contain;
           background-repeat: no-repeat;
           background-position: left center;
-          height: 50px;
-          width: 150px;
+          height: 70px;
+          width: 200px;
           transition: background-image var(--transition);
         }
 
@@ -192,11 +192,11 @@ const Footer = () => {
 
         .footer-bottom {
           border-top: 1px solid var(--color-border);
-          background: rgba(0, 0, 0, 0.05);
+          background: rgba(0, 0, 0, 0.15);
         }
 
         :root[data-theme="light"] .footer-bottom {
-          background: rgba(0, 0, 0, 0.03);
+          background: rgba(0, 0, 0, 0.06);
         }
 
         .footer-bottom-container {

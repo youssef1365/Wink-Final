@@ -1,7 +1,6 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef, useState, useEffect } from 'react';
 
-// Simple counter hook for that "counting up" effect
 const Counter = ({ value, duration = 2 }) => {
   const [count, setCount] = useState(0);
   const ref = useRef(null);
@@ -11,15 +10,13 @@ const Counter = ({ value, duration = 2 }) => {
     if (isInView) {
       let start = 0;
       const end = parseInt(value);
-      const totalMiliseconds = duration * 1000;
-      const incrementTime = totalMiliseconds / end;
-
+      const totalMs = duration * 1000;
+      const incrementTime = totalMs / end;
       const timer = setInterval(() => {
         start += 1;
         setCount(start);
         if (start === end) clearInterval(timer);
       }, incrementTime);
-
       return () => clearInterval(timer);
     }
   }, [isInView, value, duration]);
@@ -29,106 +26,174 @@ const Counter = ({ value, duration = 2 }) => {
 
 const StatsTransition = () => {
   const stats = [
-    { label: "YEARS EXPERIENCE", value: "15", suffix: "+" },
-    { label: "EVENTS MANAGED", value: "500", suffix: "+" },
-    { label: "COUNTRIES REACHED", value: "50", suffix: "+" }
+    { label: "Years Experience", value: "15", suffix: "+" },
+    { label: "Events Managed",   value: "500", suffix: "+" },
+    { label: "Countries Reached", value: "50", suffix: "+" }
   ];
 
   return (
     <>
       <section className="stats-section">
-        <div className="stats-container">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="stats-badge"
-          >
-            PROVEN TRACK RECORD
-          </motion.div>
 
-          <h2 className="stats-title">By The Numbers</h2>
+        {/* Eyebrow */}
+        <motion.p
+          className="stats-eyebrow"
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+        >
+          <span className="eyebrow-line" />
+          Proven Track Record
+          <span className="eyebrow-line" />
+        </motion.p>
 
-          <div className="stats-grid">
-            {stats.map((stat, index) => (
-              <div key={index} className="stat-item">
-                <div className="stat-value">
-                  <Counter value={stat.value} />{stat.suffix}
-                </div>
-                <div className="stat-label">{stat.label}</div>
+        {/* Title */}
+        <motion.h2
+          className="stats-title"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+        >
+          By The Numbers
+        </motion.h2>
+
+        {/* Stats row */}
+        <div className="stats-grid">
+          {stats.map((stat, index) => (
+            <motion.div
+              key={index}
+              className="stat-item"
+              initial={{ opacity: 0, y: 28 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: index * 0.12, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <div className="stat-value">
+                <Counter value={stat.value} />
+                <span className="stat-suffix">{stat.suffix}</span>
               </div>
-            ))}
-          </div>
+              <div className="stat-divider" />
+              <div className="stat-label">{stat.label}</div>
+            </motion.div>
+          ))}
         </div>
+
       </section>
 
       <style>{`
         .stats-section {
-          background-color: var(--color-bg); /* Charcoal in dark mode */
+          background-color: var(--color-bg);
           padding: var(--space-xl) var(--space-lg);
           display: flex;
-          justify-content: center;
-          transition: background-color 0.3s ease;
+          flex-direction: column;
+          align-items: center;
+          gap: 0;
         }
 
-        .stats-container {
-          max-width: var(--max-width);
-          width: 100%;
-          text-align: center;
-          /* Matches the rounded container look from your screenshot */
-          background-color: var(--color-bg-secondary);
-          padding: var(--space-xl);
-          border-radius: 40px;
-          border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .stats-badge {
-          display: inline-block;
-          background-color: rgba(68, 203, 165, 0.1); /* Subtle brand tint */
-          color: var(--color-text); /* Orange/Teal brand color */
-          padding: 8px 20px;
-          border-radius: 100px;
-          font-size: 0.75rem;
+        .stats-eyebrow {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          font-size: 0.65rem;
           font-weight: 700;
-          letter-spacing: 2px;
-          margin-bottom: var(--space-md);
+          letter-spacing: 0.28em;
+          text-transform: uppercase;
+          color: var(--color-text-primary);
+          opacity: 0.4;
+          margin: 0 0 1.2rem 0;
+        }
+
+        .eyebrow-line {
+          display: block;
+          width: 32px;
+          height: 1px;
+          background: currentColor;
+          opacity: 0.6;
         }
 
         .stats-title {
           font-size: clamp(2rem, 4vw, 3rem);
-          color: var(--color-text-primary);
-          margin-bottom: var(--space-xl);
           font-weight: 800;
+          color: var(--color-text-primary);
+          margin: 0 0 clamp(3rem, 6vw, 5rem) 0;
+          letter-spacing: -0.02em;
+          text-align: center;
         }
 
         .stats-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
-          gap: var(--space-lg);
+          width: 100%;
+          max-width: var(--max-width);
         }
 
+        /* ── STAT ITEM ── */
+        .stat-item {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          padding: 0 2rem;
+          /* Vertical separator between items */
+          border-right: 1px solid rgba(255,255,255,0.07);
+        }
+
+        .stat-item:last-child {
+          border-right: none;
+        }
+
+        /* ── VALUE ── */
         .stat-value {
-          font-size: clamp(3rem, 6vw, 5rem);
+          font-size: clamp(3.5rem, 7vw, 6rem);
           font-weight: 800;
-          color: var(--color-text); /* Highlight brand color */
+          color: var(--color-text-primary, #fff);
           line-height: 1;
+          letter-spacing: -0.03em;
+          display: flex;
+          align-items: flex-start;
         }
 
+        .stat-suffix {
+          font-size: 0.45em;
+          font-weight: 800;
+          color: var(--color-1, currentColor);
+          margin-top: 0.15em;
+          letter-spacing: 0;
+        }
+
+        /* ── SHORT DIVIDER UNDER VALUE ── */
+        .stat-divider {
+          width: 24px;
+          height: 1.5px;
+          background: var(--color-1, rgba(255,255,255,0.3));
+          margin: 1rem 0 0.9rem 0;
+          opacity: 0.6;
+        }
+
+        /* ── LABEL ── */
         .stat-label {
-          margin-top: var(--space-sm);
-          font-size: 0.8rem;
-          color: var(--color-text-secondary);
-          letter-spacing: 1px;
-          font-weight: 600;
+          font-size: 0.7rem;
+          font-weight: 700;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          color: var(--color-text-secondary, rgba(255,255,255,0.45));
         }
 
         @media (max-width: 768px) {
           .stats-grid {
             grid-template-columns: 1fr;
-            gap: var(--space-xl);
+            gap: 3rem;
           }
-          .stats-container {
-            border-radius: 24px;
+          .stat-item {
+            border-right: none;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+            padding: 0 0 3rem 0;
+          }
+          .stat-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
           }
         }
       `}</style>

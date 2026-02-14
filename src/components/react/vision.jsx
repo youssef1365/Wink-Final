@@ -1,77 +1,179 @@
 import React, { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, useInView } from 'framer-motion';
+
+/**
+ * Vision — scroll-triggered word-by-word reveal with optional colored words.
+ *
+ * Usage:
+ *   // Plain string — all words default color
+ *   <Vision text="We connect the right people at the right time" />
+ *
+ *   // Array — mark specific words with { word, accent: true } or { word, color: '#hex' }
+ *   <Vision
+ *     text={[
+ *       "We", "connect", "the",
+ *       { word: "right", accent: true },
+ *       "people", "at", "the",
+ *       { word: "right", color: "var(--color-primary)" },
+ *       "time"
+ *     ]}
+ *     subtext="Building partnerships that last."
+ *   />
+ */
 
 const Vision = ({ text, subtext }) => {
   const containerRef = useRef(null);
+  const headlineRef = useRef(null);
+  const isInView = useInView(headlineRef, { once: true, margin: "-15% 0px" });
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"]
   });
 
-  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
-  const scale = useTransform(scrollYProgress, [0, 0.2], [0.95, 1]);
-  const y = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [100, 0, 0, -100]);
+  const sectionOpacity = useTransform(scrollYProgress, [0, 0.1, 0.85, 1], [0, 1, 1, 0]);
+  const sectionY = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [60, 0, 0, -60]);
+
+  const tokens = Array.isArray(text)
+    ? text
+    : String(text).split(' ').map(w => ({ word: w }));
+
+  const words = tokens.map(t =>
+    typeof t === 'string' ? { word: t, accent: false, color: null } : t
+  );
 
   return (
-    <section ref={containerRef} className="vision-transition-section">
+    <section ref={containerRef} className="vision-section">
       <motion.div
-        style={{ opacity, scale, y }}
-        className="vision-content-wrapper"
+        style={{ opacity: sectionOpacity, y: sectionY }}
+        className="vision-wrapper"
       >
-        <div className="vision-line"></div>
-        <h2 className="vision-headline">
-          {text}
+        <motion.div
+          className="vision-rule"
+          initial={{ scaleX: 0 }}
+          whileInView={{ scaleX: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+        />
+
+        <h2 ref={headlineRef} className="vision-headline" aria-label={words.map(w => w.word).join(' ')}>
+          {words.map((token, i) => (
+            <span key={i} className="word-outer" aria-hidden="true">
+              <motion.span
+                className="word-inner"
+                style={
+                  token.color
+                    ? { color: token.color }
+                    : token.accent
+                    ? { color: 'var(--color-accent, #FFFFFF)' }
+                    : {}
+                }
+                initial={{ y: '110%', opacity: 0 }}
+                animate={isInView ? { y: '0%', opacity: 1 } : {}}
+                transition={{
+                  duration: 0.65,
+                  delay: i * 0.06,
+                  ease: [0.22, 1, 0.36, 1]
+                }}
+              >
+                {token.word}
+              </motion.span>
+            </span>
+          ))}
         </h2>
-        {subtext && <p className="vision-subtext">{subtext}</p>}
-        <div className="vision-line"></div>
+
+        {subtext && (
+          <motion.p
+            className="vision-subtext"
+            initial={{ opacity: 0, y: 16 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{
+              duration: 0.7,
+              delay: words.length * 0.06 + 0.1,
+              ease: 'easeOut'
+            }}
+          >
+            {subtext}
+          </motion.p>
+        )}
+
+        <motion.div
+          className="vision-rule"
+          initial={{ scaleX: 0 }}
+          whileInView={{ scaleX: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.9, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+        />
       </motion.div>
 
       <style jsx>{`
-        .vision-transition-section {
-          height: 80vh;
+        .vision-section {
+          min-height: 50vh;
           display: flex;
           align-items: center;
           justify-content: center;
-          background: var(--color-bg); /* Charcoal */
-          padding: 0 10vw;
+          background: var(--color-bg);
+          padding: 6vh 10vw;
           overflow: hidden;
           position: relative;
         }
 
-        .vision-content-wrapper {
+        .vision-wrapper {
           display: flex;
           flex-direction: column;
           align-items: center;
           text-align: center;
           max-width: 1000px;
+          width: 100%;
+          gap: 0;
         }
 
-        .vision-line {
-          width: 60px;
-          height: 2px;
-          background: var(--color-primary); /* Orange */
-          margin: 2rem 0;
-          opacity: 0.6;
+        .vision-rule {
+          width: 48px;
+          height: 1.5px;
+          background: var(--color-primary, currentColor);
+          opacity: 0.45;
+          margin: 1.8rem 0;
+          transform-origin: left center;
         }
 
         .vision-headline {
-          font-size: clamp(1.8rem, 4vw, 3.5rem);
+          font-size: clamp(1.9rem, 4.2vw, 3.8rem);
           font-weight: 800;
-          line-height: 1.2;
-          color: var(--color-primary); /* Orange */
+          line-height: 1.25;
+          color: var(--color-primary);
           text-transform: uppercase;
           letter-spacing: -0.02em;
+          margin: 0;
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 0.28em 0.3em;
+        }
+
+        .word-outer {
+          display: inline-block;
+          overflow: hidden;
+          padding-bottom: 0.08em;
+          line-height: inherit;
+        }
+
+        .word-inner {
+          display: inline-block;
+          color: inherit;
+          line-height: inherit;
         }
 
         .vision-subtext {
-          margin-top: 1.5rem;
-          font-size: 1rem;
+          margin-top: 0;
+          margin-bottom: 0;
+          font-size: clamp(0.78rem, 1.1vw, 0.95rem);
           color: var(--color-text-secondary);
-          max-width: 600px;
-          line-height: 1.6;
-          letter-spacing: 0.05em;
+          max-width: 560px;
+          line-height: 1.7;
+          letter-spacing: 0.08em;
           text-transform: uppercase;
+          opacity: 0.7;
         }
       `}</style>
     </section>

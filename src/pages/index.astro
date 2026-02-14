@@ -22,7 +22,7 @@ import ContactModal from '../components/react/ContactModal.jsx';
     <title>Wink-Consulting</title>
   </head>
   <body>
-    <Header client:load/>
+    <Header client:load />
     <ContactModal client:load />
     <main>
       <section id="home">
@@ -31,12 +31,20 @@ import ContactModal from '../components/react/ContactModal.jsx';
 
       <section id="about" style="scroll-margin-top: 80px;">
         <div id="about-trigger" style="height: 1px; margin-bottom: -1px;"></div>
-        <AboutUs client:load />
+        <AboutUs client:only="react" />
       </section>
 
       <Vision
         client:visible
-        text="DEEP HUMAN EXPERTISE MEETS SMART CONNECTIONS."
+        text={[
+          "DEEP",
+          { word: "HUMAN", color: "var(--pure-white)" },
+          { word: "EXPERTISE", color: "var(--pure-white)" },
+
+          "MAKES",
+          { word: "SMART", color: "var(--pure-white)" },
+          { word: "CONNECTIONS", color: "var(--pure-white)"}
+        ]}
       />
 
       <section id="services" style="scroll-margin-top: 100px;">
@@ -45,7 +53,13 @@ import ContactModal from '../components/react/ContactModal.jsx';
 
       <Vision
         client:visible
-        text="MEETINGS ARE DESIGNED TO CREATE GROWTH, PARTNERSHIPS, AND LONG-TERM IMPACT."
+        text={[
+          "MEETINGS", "ARE", "DESIGNED", "TO", "CREATE",
+          { word: "GROWTH,", color: "var(--pure-white)" },
+          { word: "PARTNERSHIPS,", color: "var(--pure-white)" },
+          "AND", "LONG-TERM",
+          { word: "IMPACT.", color: "var(--pure-white)" }
+        ]}
       />
 
       <section id="packages" style="scroll-margin-top: 100px;">
@@ -70,7 +84,6 @@ import ContactModal from '../components/react/ContactModal.jsx';
     scroll-behavior: smooth;
   }
 
-  /* Global safe-guard for section spacing */
   section {
     position: relative;
   }

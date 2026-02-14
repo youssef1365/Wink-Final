@@ -6,13 +6,14 @@
 
 :root {
   --color-text: #00CEC1;
-  --color-text-secondary: #D1DBDC;
+  --color-bg-third: #D1DBDC;
   --color-bg: #013e56;
   --color-bg-secondary: #018391;
   --color-primary: #17b8c8;
+  --color-extra: #44cba5;
   --color-primary-hover: #5cabff;
   --color-border: #333333;
-  --color-1: #7BDC9B;
+  --color-accent: #7BDC9B;
   --font-sans: system-ui, -apple-system, sans-serif;
   --max-width: 1200px;
   --border-radius: 0.5rem;
@@ -23,16 +24,18 @@
   --space-lg: 2rem;
   --space-xl: 4rem;
   --logo-url: url('/WinkWhite.png');
+  --pure-white: white;
 }
 
 :root[data-theme="light"] {
-  --color-text: #003f5c;
-  --color-text-secondary: #00CEC1;
+  --color-text: #7ABFB8;
+  --color-text-secondary: #003f5c;
   --color-bg: #D1DBDC;
-  --color-bg-secondary: #f5f5f5;
-  --color-primary: #0066cc;
-  --color-primary-hover: #0052a3;
-  --color-border: #e0e0e0;
+  --color-bg-secondary: #FFFFFF;
+  --color-primary: #17b8c8;
+  --color-primary-hover: #00CEC1;
+  --color-border: #D1DBDC;
+  --color-accent: #7BDC9B;
   --logo-url: url('/WinkBlue.png');
 }
 

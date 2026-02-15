@@ -45,19 +45,19 @@ const Hero = () => {
           font-size: clamp(3rem, 10vw, 6rem);
           line-height: 1.1;
           font-weight: 800;
-          color: var(--color-text);
+          color: var(--extra-color-third);
           margin-bottom: 2rem;
         }
 
         .highlight {
-          color: var(--color-text);
+          color: var(--extra-color-third);
           font-size: clamp(3rem, 10vw, 5rem);
         }
 
         .hero-description {
           font-size: clamp(1.1rem, 2vw, 1.4rem);
           line-height: 1.7;
-          color: var(--color-text-secondary);
+          color: var(--color-third);
           max-width: 80%;
           margin: 0 auto 3rem;
         }
@@ -69,7 +69,7 @@ const Hero = () => {
         }
 
         .cta-button {
-          background-color: #44cba5;
+          background-color: var(--extra-color-third);
           color: white;
           border: none;
           padding: 1rem 1rem;
@@ -83,7 +83,7 @@ const Hero = () => {
         }
 
         .secondary-link {
-          color: var(--color-text);
+          color: var(--color-third);
           text-decoration: none;
           font-weight: 500;
           font-size: 1.1rem;

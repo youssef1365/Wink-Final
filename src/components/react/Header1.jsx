@@ -36,8 +36,8 @@ const Header = ({ onContactClick }) => {
         offsetPosition += expansionOffset;
       }
       if (targetId === 'services') {
-        const travelDistance = window.innerHeight * 3;  // Match your 300vh wrapper
-        const expansionOffset = travelDistance * 0.7;   // Land at 40% scroll progress
+        const travelDistance = window.innerHeight * 3;
+        const expansionOffset = travelDistance * 0.7;
         offsetPosition += expansionOffset;
       }
 
@@ -50,8 +50,13 @@ const Header = ({ onContactClick }) => {
   };
 
   return (
-    <header className={`header ${isScrolled ? 'scrolled' : ''}`}>
-      <div className="nav-container">
+    <header className="header-shell">
+      <motion.div
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.8, ease: 'easeOut' }}
+        className={`nav-pill ${isScrolled ? 'scrolled' : ''}`}
+      >
         <nav className="nav">
           <div className="nav-logo">
             <a href="#home" onClick={(e) => handleNavClick(e, 'home')} className="logo-wrapper">
@@ -117,42 +122,48 @@ const Header = ({ onContactClick }) => {
             </button>
           </div>
         </nav>
-      </div>
+      </motion.div>
 
       <style jsx>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Montserrat:wght@400;600;700;800&display=swap');
 
-        .header {
+        .header-shell {
           position: fixed;
           top: 0;
           left: 0;
           right: 0;
           z-index: 1000;
-          width: 100%;
-          padding: 1.1rem 0;
-          transition: padding 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-                      background 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-                      backdrop-filter 0.5s ease,
-                      border-color 0.5s ease;
-          background: transparent;
+          display: flex;
+          justify-content: center;
+          padding: 1rem 1rem 0;
+          pointer-events: none; /* let clicks pass through the gap around the pill */
         }
 
-        .header.scrolled {
-          padding: 0.35rem 0;
+        .nav-pill {
+          pointer-events: all; /* re-enable clicks on the pill itself */
+          width: 100%;
+          max-width: 1280px;
+          border-radius: 9999px;
+          padding: 0 2rem;
           background: transparent;
-          backdrop-filter: blur(24px);
-          -webkit-backdrop-filter: blur(24px);
-          border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+          backdrop-filter: blur(20px) saturate(180%);
+          -webkit-backdrop-filter: blur(20px) saturate(180%);
+          border: 1px solid rgba(255, 255, 255, 0.06);
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4),
+                      0 1px 0 rgba(255, 255, 255, 0.04) inset;
+          transition: padding 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+                      background 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+                      box-shadow 0.5s ease;
+        }
+
+        .nav-pill.scrolled {
+          background: rgba(5, 5, 8, 0.65);
+          box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55),
+                      0 1px 0 rgba(255, 255, 255, 0.06) inset;
         }
 
         .theme-icon {
           font-size: 1.4rem;
-        }
-
-        .nav-container {
-          width: 100%;
-          padding: 0 4vw;
-          box-sizing: border-box;
         }
 
         .nav {
@@ -161,11 +172,13 @@ const Header = ({ onContactClick }) => {
           align-items: center;
           width: 100%;
           position: relative;
+          padding: 0.6rem 0;
         }
 
+        /* ── LOGO ── */
         .nav-logo {
           flex-shrink: 0;
-          min-width: 220px;
+          min-width: 200px;
         }
 
         .logo-wrapper {
@@ -183,6 +196,7 @@ const Header = ({ onContactClick }) => {
           background-position: left center;
         }
 
+        /* ── NAV LINKS ── */
         .nav-links {
           display: flex;
           gap: clamp(1.4rem, 2.5vw, 3.2rem);
@@ -195,14 +209,13 @@ const Header = ({ onContactClick }) => {
           padding: 0;
         }
 
-        .nav-link,
-        .wink-trigger-btn {
+        .nav-link, .wink-trigger-btn {
           font-family: 'Montserrat', sans-serif;
           font-size: 0.82rem;
           text-transform: uppercase;
           letter-spacing: 0.22em;
           font-weight: 700;
-          color: var(--color-third);
+          color: var(--color-text-primary);
           text-decoration: none;
           background: none;
           border: none;
@@ -216,11 +229,11 @@ const Header = ({ onContactClick }) => {
           transition: opacity 0.3s ease, color 0.3s ease;
         }
 
-        .nav-link:hover,
-        .wink-trigger-btn:hover {
+        .nav-link:hover, .wink-trigger-btn:hover {
           opacity: 1;
         }
 
+        /* Elegant dot indicator on hover */
         .nav-link-dot {
           position: absolute;
           bottom: -2px;
@@ -229,7 +242,7 @@ const Header = ({ onContactClick }) => {
           width: 3px;
           height: 3px;
           border-radius: 50%;
-          background: var(--color-third);
+          background: var(--color-text-primary);
           transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
@@ -249,6 +262,7 @@ const Header = ({ onContactClick }) => {
           transform: translateY(2px);
         }
 
+        /* ── DROPDOWN ── */
         .dropdown-wrapper {
           position: relative;
           display: flex;
@@ -261,7 +275,7 @@ const Header = ({ onContactClick }) => {
           left: 50%;
           transform: translateX(-50%);
           min-width: 160px;
-          background: var(--extra-color-one);
+          background: rgba(5, 5, 8, 0.88);
           backdrop-filter: blur(20px) saturate(180%);
           -webkit-backdrop-filter: blur(20px) saturate(180%);
           list-style: none;
@@ -270,7 +284,7 @@ const Header = ({ onContactClick }) => {
           border: 1px solid rgba(255, 255, 255, 0.07);
           border-radius: 8px;
           box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5),
-                      0 0 0 0.5px rgba(255, 255, 255, 0.04);
+                      0 0 0 0.5px rgba(255,255,255,0.04);
           z-index: 1000;
         }
 
@@ -282,7 +296,7 @@ const Header = ({ onContactClick }) => {
           transform: translateX(-50%) rotate(45deg);
           width: 8px;
           height: 8px;
-          background: var(--extra-color-one);
+          background: rgba(5, 5, 8, 0.88);
           border-left: 1px solid rgba(255, 255, 255, 0.07);
           border-top: 1px solid rgba(255, 255, 255, 0.07);
         }
@@ -293,7 +307,7 @@ const Header = ({ onContactClick }) => {
           padding: 0.65rem 1.4rem;
           font-family: 'Montserrat', sans-serif;
           font-size: 0.62rem;
-          color: var(--color-third);
+          color: rgba(255, 255, 255, 0.5);
           text-decoration: none;
           text-transform: uppercase;
           letter-spacing: 0.18em;
@@ -302,10 +316,11 @@ const Header = ({ onContactClick }) => {
         }
 
         .dropdown-list li a:hover {
-          color: var(--color-one);
+          color: rgba(255, 255, 255, 0.95);
           padding-left: 1.7rem;
         }
 
+        /* ── CTA AREA ── */
         .nav-cta {
           display: flex;
           align-items: center;
@@ -323,17 +338,18 @@ const Header = ({ onContactClick }) => {
           display: flex;
           align-items: center;
           justify-content: center;
+          transition: background 0.3s ease;
           opacity: 0.65;
-          transition: opacity 0.3s ease;
         }
 
         .theme-toggle-minimal:hover {
+          background: transparent;
           opacity: 1;
         }
 
         .cta-button-high-end {
-          background: var(--extra-color-third);
-          color: var(--extra-color-one);
+          background: var(--color-bg-secondary);
+          color: #050508;
           border: none;
           padding: 0.85rem 2rem;
           font-family: 'Montserrat', sans-serif;
@@ -343,39 +359,27 @@ const Header = ({ onContactClick }) => {
           font-weight: 800;
           cursor: pointer;
           border-radius: 100px;
+          transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+          box-shadow 0.35s ease,
+          letter-spacing 0.35s ease;
           position: relative;
           overflow: hidden;
           white-space: nowrap;
           display: inline-flex;
           align-items: center;
           gap: 0.5rem;
-          box-shadow: 0 2px 16px rgba(0, 0, 0, 0.15);
-          transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-                      box-shadow 0.35s ease,
-                      letter-spacing 0.35s ease;
+          box-shadow: 0 2px 16px rgba(255, 255, 255, 0.1);
         }
 
         .cta-button-high-end:hover {
           transform: translateY(-2px);
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+          box-shadow: 0 8px 32px;
+          background: var(--color-bg-secondary);
           letter-spacing: 0.21em;
         }
 
         .cta-button-high-end:active {
           transform: translateY(0);
-        }
-
-        .cta-button-high-end::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background: var(--color-one);
-          transform: translateX(-120%);
-          transition: transform 0.65s ease;
-        }
-
-        .cta-button-high-end:hover::before {
-          transform: translateX(120%);
         }
 
         .cta-text {
@@ -395,8 +399,23 @@ const Header = ({ onContactClick }) => {
           transform: translateX(3px);
         }
 
+        .cta-button-high-end::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: var(--color-bg);
+          transform: translateX(-120%);
+          transition: transform 0.65s ease;
+        }
+
+        .cta-button-high-end:hover::before {
+          transform: translateX(120%);
+        }
+
         @media (max-width: 1024px) {
           .nav-links { display: none; }
+          .header-shell { padding: 0.75rem 0.75rem 0; }
+          .nav-pill { border-radius: 9999px; }
         }
       `}</style>
     </header>

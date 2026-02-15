@@ -5,47 +5,48 @@
 }
 
 :root {
+/* Main Pallet */
   
-  /* Main Palette */
-  --color-one: #00CEC1;
-  --color-two: #003F5C;
-  --color-third: #D1DBDC;
-  --color-fourth: #7BDC9B;
-  
-  /* Extra Palette */
-  --extra-color-one: #018391;
-  --extra-color-two: #0eb2ae;
-  --extra-color-third: #44cba5;
+  --color-one:          #00CEC1;
+  --color-two:          #003F5C;
+  --color-third:        #D1DBDC;
+  --color-fourth:       #7BDC9B;
+
+  /* Extra Palette  */
+  --extra-color-one:    #ffffff;
+  --extra-color-two:    #0eb2ae;
+  --extra-color-third:  #44cba5;
   --extra-color-fourth: #01536c;
-  --extra-color-fifth: #213651;
-  
-  --font-sans: system-ui, -apple-system, sans-serif;
-  --max-width: 1200px;
-  --border-radius: 0.5rem;
-  --transition: 0.3s ease;
-  --space-xs: 0.25rem;
-  --space-sm: 0.5rem;
-  --space-md: 1rem;
-  --space-lg: 2rem;
-  --space-xl: 4rem;
-  --logo-url: url('/WinkWhite.png');
-  --pure-white: white;
+  --extra-color-fifth:  #213651;
+
+  --font-sans:      system-ui, -apple-system, sans-serif;
+  --max-width:      1200px;
+  --border-radius:  0.5rem;
+  --transition:     0.3s ease;
+  --space-xs:       0.25rem;
+  --space-sm:       0.5rem;
+  --space-md:       1rem;
+  --space-lg:       2rem;
+  --space-xl:       4rem;
+  --logo-url:       url('/WinkWhite.png');
+  --pure-white:     white;
 }
 
 :root[data-theme="light"] {
+
   /* Main Palette */
-  --color-one: #7ABFB8;
-  --color-two: #D1DBDC;
-  --color-third: #003f5c;
-  --color-fourth: #003F5C;
-  
-  /* Extra Palette */
-  --extra-color-one: #FFFFFF;
-  --extra-color-two: #17b8c8;
-  --extra-color-third: #213651;
+  --color-one:          #7ABFB8;
+  --color-two:          #D1DBDC;
+  --color-third:        #003F5C;
+  --color-fourth:       #44cba5;
+
+  /* Extra Palette  */
+  --extra-color-one:    #050a0f;
+  --extra-color-two:    #17b8c8;
+  --extra-color-third:  #213651;
   --extra-color-fourth: #00CEC1;
-  --extra-color-fifth: #D1DBDC;
-  
+  --extra-color-fifth:  #D1DBDC;
+
   --logo-url: url('/WinkBlue.png');
 }
 
@@ -55,8 +56,8 @@ html {
 
 body {
   font-family: var(--font-sans);
-  color: var(--color-one);
-  background-color: var(--color-two);
+   color: var(--color-third);
+  background-color: transparent;
   line-height: 1.6;
   transition: background-color var(--transition), color var(--transition);
 }

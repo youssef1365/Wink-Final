@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import Header from '../components/react/Header.jsx';
+import Header from '../components/react/Header1.jsx';
 import Hero from '../components/react/Hero.jsx';
 import AboutUs from '../components/react/aboutus.jsx';
 import Vision from '../components/react/vision.jsx';
@@ -22,6 +22,16 @@ import ContactModal from '../components/react/ContactModal.jsx';
     <title>Wink-Consulting</title>
   </head>
   <body>
+
+    <div class="bg-base" aria-hidden="true"></div>
+    <div class="bg-mesh" aria-hidden="true">
+      <div class="blob blob-1"></div>
+      <div class="blob blob-2"></div>
+      <div class="blob blob-3"></div>
+      <div class="blob blob-4"></div>
+    </div>
+    <div class="bg-grain" aria-hidden="true"></div>
+
     <Header client:load />
     <ContactModal client:load />
     <main>
@@ -38,12 +48,11 @@ import ContactModal from '../components/react/ContactModal.jsx';
         client:visible
         text={[
           "DEEP",
-          { word: "HUMAN", color: "var(--pure-white)" },
-          { word: "EXPERTISE", color: "var(--pure-white)" },
-
+          { word: "HUMAN", color: "var(--extra-color-one)" },
+          { word: "EXPERTISE", color: "var(--extra-color-one)" },
           "MAKES",
-          { word: "SMART", color: "var(--pure-white)" },
-          { word: "CONNECTIONS", color: "var(--pure-white)"}
+          { word: "SMART", color: "var(--extra-color-one)" },
+          { word: "CONNECTIONS", color: "var(--extra-color-one)"}
         ]}
       />
 
@@ -87,4 +96,157 @@ import ContactModal from '../components/react/ContactModal.jsx';
   section {
     position: relative;
   }
-</style>
+
+  /* ============================================================
+     BACKGROUND SYSTEM — paste into global.css
+     Responds to [data-theme="light"] which your Header already
+     sets on <html>. Default (no attribute) = dark theme.
+     ============================================================ */
+
+  /* ── Shared structure ── */
+  .bg-base {
+    position: fixed;
+    inset: 0;
+    z-index: -3;
+    transition: background-color 0.5s ease;
+  }
+
+  .bg-mesh {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    overflow: hidden;
+  }
+
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    will-change: transform;
+  }
+
+  .bg-grain {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 200px 200px;
+    transition: opacity 0.5s ease;
+  }
+
+  /* ════════════════════════════════════════════
+     DARK THEME (default)
+     Base: deep near-black rooted in #003F5C
+     Blobs: #00CEC1 teal, #003F5C navy,
+            #7BDC9B green, #D1DBDC pale silver
+  ════════════════════════════════════════════ */
+  .bg-base {
+    background-color: #020d14; /* darker than #003F5C for breathing room */
+  }
+
+  /* Teal #00CEC1 — top left, hero glow */
+  .blob-1 {
+    width: 60vw;
+    height: 60vw;
+    top: -20vw;
+    left: -10vw;
+    background: radial-gradient(circle, rgba(0, 206, 193, 0.22) 0%, transparent 70%);
+    animation: drift-1 24s ease-in-out infinite alternate;
+  }
+
+  /* Navy #003F5C — bottom right, deep anchor */
+  .blob-2 {
+    width: 55vw;
+    height: 55vw;
+    bottom: -15vw;
+    right: -10vw;
+    background: radial-gradient(circle, rgba(0, 63, 92, 0.55) 0%, transparent 70%);
+    animation: drift-2 30s ease-in-out infinite alternate;
+  }
+
+  /* Green #7BDC9B — mid right, accent warmth */
+  .blob-3 {
+    width: 38vw;
+    height: 38vw;
+    top: 32%;
+    right: 2%;
+    background: radial-gradient(circle, rgba(123, 220, 155, 0.11) 0%, transparent 70%);
+    animation: drift-3 20s ease-in-out infinite alternate;
+  }
+
+  /* Silver #D1DBDC — mid left, soft fill */
+  .blob-4 {
+    width: 44vw;
+    height: 44vw;
+    top: 48%;
+    left: 12%;
+    background: radial-gradient(circle, rgba(209, 219, 220, 0.07) 0%, transparent 70%);
+    animation: drift-4 26s ease-in-out infinite alternate;
+  }
+
+  .bg-grain {
+    opacity: 0.04;
+  }
+
+  /* ════════════════════════════════════════════
+     LIGHT THEME  [data-theme="light"]
+     Base: #FFFFFF (--extra-color-one)
+     Blobs: #7ABFB8 muted teal, #D1DBDC silver,
+            #00CEC1 cyan, #003F5C deep navy hint
+  ════════════════════════════════════════════ */
+  :root[data-theme="light"] .bg-base {
+    background-color: #ffffff; /* --extra-color-one */
+  }
+
+  /* Muted teal #7ABFB8 — top left */
+  :root[data-theme="light"] .blob-1 {
+    background: radial-gradient(circle, rgba(122, 191, 184, 0.28) 0%, transparent 70%);
+  }
+
+  /* Silver #D1DBDC — bottom right, light and airy */
+  :root[data-theme="light"] .blob-2 {
+    background: radial-gradient(circle, rgba(209, 219, 220, 0.6) 0%, transparent 70%);
+  }
+
+  /* Cyan #00CEC1 — mid right, fresh accent */
+  :root[data-theme="light"] .blob-3 {
+    background: radial-gradient(circle, rgba(0, 206, 193, 0.14) 0%, transparent 70%);
+  }
+
+  /* Navy #003F5C — mid left, barely there depth */
+  :root[data-theme="light"] .blob-4 {
+    background: radial-gradient(circle, rgba(0, 63, 92, 0.06) 0%, transparent 70%);
+  }
+
+  :root[data-theme="light"] .bg-grain {
+    opacity: 0.022;
+  }
+
+  /* ── Drift keyframes (shared, theme-agnostic) ── */
+  @keyframes drift-1 {
+    0%   { transform: translate(0, 0) scale(1); }
+    33%  { transform: translate(4vw, 6vh) scale(1.05); }
+    66%  { transform: translate(-3vw, 10vh) scale(0.97); }
+    100% { transform: translate(6vw, 3vh) scale(1.03); }
+  }
+
+  @keyframes drift-2 {
+    0%   { transform: translate(0, 0) scale(1); }
+    33%  { transform: translate(-5vw, -4vh) scale(1.04); }
+    66%  { transform: translate(3vw, -8vh) scale(0.96); }
+    100% { transform: translate(-4vw, -2vh) scale(1.06); }
+  }
+
+  @keyframes drift-3 {
+    0%   { transform: translate(0, 0) scale(1); }
+    50%  { transform: translate(-6vw, 8vh) scale(1.08); }
+    100% { transform: translate(4vw, -5vh) scale(0.95); }
+  }
+
+  @keyframes drift-4 {
+    0%   { transform: translate(0, 0) scale(1); }
+    40%  { transform: translate(5vw, -6vh) scale(1.06); }
+    100% { transform: translate(-3vw, 7vh) scale(0.98); }
+  }</style>

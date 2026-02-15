@@ -1,26 +1,6 @@
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform, useInView } from 'framer-motion';
 
-/**
- * Vision — scroll-triggered word-by-word reveal with optional colored words.
- *
- * Usage:
- *   // Plain string — all words default color
- *   <Vision text="We connect the right people at the right time" />
- *
- *   // Array — mark specific words with { word, accent: true } or { word, color: '#hex' }
- *   <Vision
- *     text={[
- *       "We", "connect", "the",
- *       { word: "right", accent: true },
- *       "people", "at", "the",
- *       { word: "right", color: "var(--color-primary)" },
- *       "time"
- *     ]}
- *     subtext="Building partnerships that last."
- *   />
- */
-
 const Vision = ({ text, subtext }) => {
   const containerRef = useRef(null);
   const headlineRef = useRef(null);
@@ -141,7 +121,7 @@ const Vision = ({ text, subtext }) => {
           font-size: clamp(1.9rem, 4.2vw, 3.8rem);
           font-weight: 800;
           line-height: 1.25;
-          color: var(--color-primary);
+          color: var(--extra-color-third);
           text-transform: uppercase;
           letter-spacing: -0.02em;
           margin: 0;
@@ -168,7 +148,7 @@ const Vision = ({ text, subtext }) => {
           margin-top: 0;
           margin-bottom: 0;
           font-size: clamp(0.78rem, 1.1vw, 0.95rem);
-          color: var(--color-text-secondary);
+          color: var(--extra-color-third);
           max-width: 560px;
           line-height: 1.7;
           letter-spacing: 0.08em;
